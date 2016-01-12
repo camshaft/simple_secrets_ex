@@ -3,10 +3,12 @@ defmodule SimpleSecretsEx.Mixfile do
 
   def project do
     [app: :simple_secrets,
-     version: "1.1.0",
-     elixir: "~> 1.0",
+     description: "A simple, opinionated library for encrypting small packets of data securely.",
+     version: "1.0.0",
+     elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     package: package,
      deps: deps]
   end
 
@@ -17,5 +19,12 @@ defmodule SimpleSecretsEx.Mixfile do
   defp deps do
     [ {:msgpax, "~> 0.8"},
       {:pkcs7, "~> 1.0.2"} ]
+  end
+
+  defp package do
+    [files: ["lib", "mix.exs", "README*"],
+     maintainers: ["Cameron Bytheway"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/camshaft/simple_secrets_ex"}]
   end
 end
