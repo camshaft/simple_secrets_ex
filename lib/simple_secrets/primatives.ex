@@ -50,11 +50,10 @@ defmodule SimpleSecrets.Primatives do
     :crypto.hmac(:sha256, hmac_key, buffer)
   end
 
-  def equals?(a, a) do
-    true
-  end
-  def equals?(_, _) do
-    false
+  for n <- 1..32 do
+    def equals?(a, b) when byte_size(a) == unquote(n) and byte_size(b) == unquote(n) do
+      :crypto.exor(a, b) == unquote(Stream.repeatedly(fn -> 0 end) |> Enum.take(n) |> :erlang.iolist_to_binary)
+    end
   end
 
   def binify(string) do
