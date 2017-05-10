@@ -21,7 +21,7 @@ Send:
 master_key = "64-char-hex"
 
 sender = SimpleSecrets.init(master_key)
-packet = SimpleSecrets.pack("this is a secret message", sender)
+{:ok, packet} = SimpleSecrets.pack("this is a secret message", sender)
 
 IO.inspect(packet)
 # <<"bBDTl5NKdpvMfriRElbbOw0WEsENjbvv7mqK4"...>>
@@ -35,7 +35,7 @@ sender = SimpleSecrets.init(master_key)
 
 # Read data from somewhere
 packet = <<"bBDTl5NKdpvMfriRElbbOw0WEsENjbvv7mqK4"...>>
-message = SimpleSecrets.unpack(packet, master_key)
+{:ok, message} = SimpleSecrets.unpack(packet, sender)
 
 IO.inspect(message)
 # "this is a secret message"
