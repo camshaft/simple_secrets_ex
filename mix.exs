@@ -8,8 +8,8 @@ defmodule SimpleSecretsEx.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     package: package,
-     deps: deps]
+     package: package(),
+     deps: deps()]
   end
 
   def application do
@@ -17,7 +17,7 @@ defmodule SimpleSecretsEx.Mixfile do
   end
 
   defp deps do
-    [ {:msgpax, "~> 0.8"},
+    [ {:msgpax, "~> 2.0.0"},
       {:pkcs7, "~> 1.0.2"} ]
   end
 
