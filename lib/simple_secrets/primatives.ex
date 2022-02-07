@@ -88,6 +88,7 @@ defmodule SimpleSecrets.Primatives do
     case buffer |> byte_size |> rem(4) do
       0 ->
         buffer
+
       diff ->
         pad(buffer, 4 - diff)
     end
