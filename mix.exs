@@ -22,7 +22,7 @@ defmodule SimpleSecretsEx.Mixfile do
 
   defp deps do
     [
-      {:msgpax, "~> 2.2.0"},
+      {:msgpax, "~> 2.2"},
       {:pkcs7, "~> 1.0.2"}
     ]
   end
