@@ -58,7 +58,7 @@ defmodule SimpleSecrets.Primatives do
   for n <- 1..32 do
     def equals?(a, b) when byte_size(a) == unquote(n) and byte_size(b) == unquote(n) do
       :crypto.exor(a, b) ==
-        unquote(Stream.repeatedly(fn -> 0 end) |> Enum.take(n) |> :erlang.iolist_to_binary())
+        unquote(Stream.repeatedly(fn -> 0 end) |> Enum.take(n) |> IO.iodata_to_binary())
     end
   end
 
@@ -77,7 +77,7 @@ defmodule SimpleSecrets.Primatives do
   def serialize(object) do
     object
     |> Msgpax.pack!()
-    |> :erlang.iolist_to_binary()
+    |> IO.iodata_to_binary()
   end
 
   def deserialize(binary) do
