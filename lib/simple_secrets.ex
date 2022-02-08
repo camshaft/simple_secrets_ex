@@ -11,9 +11,9 @@ defmodule SimpleSecrets do
     |> Base.decode16!()
     |> init()
   end
+
   def init(key) when bit_size(key) == @key_size do
-    %Sender{master: key,
-            key_id: Primatives.identify(key)}
+    %Sender{master: key, key_id: Primatives.identify(key)}
   end
 
   def pack(data, sender) do
@@ -53,7 +53,7 @@ defmodule SimpleSecrets do
   end
 
   defp body_to_data(data) do
-    <<_ :: binary-size(16), bindata :: binary>> = data
+    <<_::binary-size(16), bindata::binary>> = data
     Primatives.deserialize(bindata)
   end
 
@@ -64,7 +64,7 @@ defmodule SimpleSecrets do
 
   defp decrypt_body(cipher_data, master) do
     key = Primatives.derive_sender_key(master)
-    <<iv :: binary-size(16), encrypted :: binary>> = cipher_data
+    <<iv::binary-size(16), encrypted::binary>> = cipher_data
     Primatives.decrypt(encrypted, key, iv)
   end
 
@@ -76,7 +76,7 @@ defmodule SimpleSecrets do
   end
 
   defp verify(packet, master, key_id) do
-    <<packet_key_id :: binary-size(6), _ :: binary>> = packet
+    <<packet_key_id::binary-size(6), _::binary>> = packet
 
     if !Primatives.equals?(packet_key_id, key_id) do
       raise SimpleSecrets.Exception, code: :key_mismatch
@@ -92,7 +92,7 @@ defmodule SimpleSecrets do
       raise SimpleSecrets.Exception, code: :mac_mismatch
     end
 
-    <<_ :: binary-size(6), body :: binary>> = data
+    <<_::binary-size(6), body::binary>> = data
     body
   end
 end

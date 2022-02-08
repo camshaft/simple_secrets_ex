@@ -1,4 +1,8 @@
 defmodule SimpleSecrets.Primatives do
+  @moduledoc false
+
+  @cipher :aes_256_cbc
+
   def nonce() do
     :crypto.strong_rand_bytes(16)
   end
@@ -25,18 +29,19 @@ defmodule SimpleSecrets.Primatives do
 
   def encrypt(buffer, key) do
     iv = nonce()
-    cipher = :crypto.block_encrypt(:aes_cbc256, key, iv, PKCS7.pad(buffer))
+    cipher = :crypto.crypto_one_time(@cipher, key, iv, PKCS7.pad(buffer), true)
+
     iv <> cipher
   end
 
   def decrypt(buffer, key, iv) do
-    :crypto.block_decrypt(:aes_cbc256, key, iv, buffer)
+    :crypto.crypto_one_time(@cipher, key, iv, buffer, false)
     |> PKCS7.unpad()
   end
 
   def identify(buffer) do
     input = [buffer_size(buffer), buffer]
-    <<prefix :: binary-size(6), _ :: binary>> = :crypto.hash(:sha256, input)
+    <<prefix::binary-size(6), _::binary>> = :crypto.hash(:sha256, input)
     prefix
   end
 
@@ -47,12 +52,13 @@ defmodule SimpleSecrets.Primatives do
   end
 
   def mac(buffer, hmac_key) do
-    :crypto.hmac(:sha256, hmac_key, buffer)
+    :crypto.mac(:hmac, :sha256, hmac_key, buffer)
   end
 
   for n <- 1..32 do
     def equals?(a, b) when byte_size(a) == unquote(n) and byte_size(b) == unquote(n) do
-      :crypto.exor(a, b) == unquote(Stream.repeatedly(fn -> 0 end) |> Enum.take(n) |> :erlang.iolist_to_binary)
+      :crypto.exor(a, b) ==
+        unquote(Stream.repeatedly(fn -> 0 end) |> Enum.take(n) |> IO.iodata_to_binary())
     end
   end
 
@@ -71,7 +77,7 @@ defmodule SimpleSecrets.Primatives do
   def serialize(object) do
     object
     |> Msgpax.pack!()
-    |> :erlang.iolist_to_binary()
+    |> IO.iodata_to_binary()
   end
 
   def deserialize(binary) do
@@ -82,6 +88,7 @@ defmodule SimpleSecrets.Primatives do
     case buffer |> byte_size |> rem(4) do
       0 ->
         buffer
+
       diff ->
         pad(buffer, 4 - diff)
     end
